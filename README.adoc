@@ -1,0 +1,19 @@
+= Advent of Code 2020
+
+This repository contains my solution to 2020's https://adventofcode.com/2020[Advent of Code] puzzles in Go.
+
+The easiest way to run these is using docker – simply execute `run.sh &lt;day&gt;` to build a docker image and execute
+the specific day.
+
+I have separate repositories for solutions from previous years:
+
+ - https://github.com/csmith/aoc-2019[2019] (Golang)
+ - https://github.com/csmith/aoc-2018[2018] (Nim)
+ - https://github.com/csmith/aoc-2017[2017] (Python)
+ - https://github.com/csmith/aoc-2016[2016] (Python)
+ - https://github.com/csmith/aoc-2015[2015] (Python)
+
+'''
+
+To the extent possible under law, I waive all copyright and related or neighboring rights to this work. This work is
+published from the United Kingdom. See link:LICENCE.md[LICENCE.md] for full details.
