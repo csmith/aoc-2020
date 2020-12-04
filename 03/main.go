@@ -2,16 +2,18 @@ package main
 
 import "github.com/csmith/aoc-2020/common"
 
-var lines []string
+var data common.Map
+
+const Tree common.Tile = '#'
 
 func count(rowDelta, colDelta int) int {
 	row := 0
 	col := 0
 	trees := 0
-	for row < len(lines)-rowDelta {
+	for row < len(data)-rowDelta {
 		row += rowDelta
-		col = (col + colDelta) % len(lines[0])
-		if lines[row][col] == '#' {
+		col += colDelta
+		if data.TileAt(row, col) == Tree {
 			trees++
 		}
 	}
@@ -19,7 +21,7 @@ func count(rowDelta, colDelta int) int {
 }
 
 func main() {
-	lines = common.ReadFileAsStrings("03/input.txt")
+	data = common.ReadFileAsMap("03/input.txt")
 	part1 := count(1, 3)
 	println(part1)
 	println(part1 * count(1, 1) * count(1, 5) * count(1, 7) * count(2, 1))
