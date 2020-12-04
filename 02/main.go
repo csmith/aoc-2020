@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/csmith/aoc-2019/common"
+	"github.com/csmith/aoc-2020/common"
 	"strings"
 )
 

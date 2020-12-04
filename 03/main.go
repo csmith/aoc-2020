@@ -1,6 +1,6 @@
 package main
 
-import "github.com/csmith/aoc-2019/common"
+import "github.com/csmith/aoc-2020/common"
 
 var lines []string
 
