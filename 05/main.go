@@ -12,10 +12,7 @@ func main() {
 	max := 0
 	var seats [1024]bool
 	for i := range input {
-		line := input[i]
-		row, _ := strconv.ParseInt(replacer.Replace(line[0:7]), 2, 64)
-		col, _ := strconv.ParseInt(replacer.Replace(line[7:10]), 2, 64)
-		id := row*8 + col
+		id, _ := strconv.ParseInt(replacer.Replace(input[i]), 2, 64)
 		max = common.Max(max, int(id))
 		seats[id] = true
 	}
