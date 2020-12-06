@@ -3,6 +3,7 @@ package common
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 // ReadFileAsInts reads all lines from the given path and returns them in a slice of ints.
@@ -15,6 +16,28 @@ func ReadFileAsInts(path string) []int {
 // If an error occurs, the function will panic.
 func ReadFileAsStrings(path string) []string {
 	return readStringsWithScanner(path, bufio.ScanLines)
+}
+
+// ReadFileAsChunkedStrings reads all lines from the given path, splits them into chunks separated by a blank line,
+// and returns them in a slice of strings. Lines within each chunk are concatenated together, separated by a space.
+// If an error occurs, the function will panic.
+func ReadFileAsStringChunks(path string) []string {
+	var res []string
+	chunk := strings.Builder{}
+	lines := readStringsWithScanner(path, bufio.ScanLines)
+	for i := range lines {
+		if lines[i] == "" && chunk.Len() > 0 {
+			res = append(res, strings.TrimSpace(chunk.String()))
+			chunk.Reset()
+		} else {
+			chunk.WriteString(lines[i])
+			chunk.WriteRune(' ')
+		}
+	}
+	if chunk.Len() > 0 {
+		res = append(res, strings.TrimSpace(chunk.String()))
+	}
+	return res
 }
 
 // ReadCsvAsInts reads all data from the given path and returns an int slice

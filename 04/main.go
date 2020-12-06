@@ -6,27 +6,22 @@ import (
 	"strings"
 )
 
-func parse(lines []string) []map[string]string {
+func parse(chunks []string) []map[string]string {
 	var passports []map[string]string
-	details := make(map[string]string)
-	for i := range lines {
-		if strings.TrimSpace(lines[i]) == "" {
-			passports = append(passports, details)
-			details = make(map[string]string)
-		} else {
-			words := strings.Split(lines[i], " ")
-			for j := range words {
-				parts := strings.SplitN(words[j], ":", 2)
-				details[parts[0]] = parts[1]
-			}
+	for i := range chunks {
+		details := make(map[string]string)
+		words := strings.Split(chunks[i], " ")
+		for j := range words {
+			parts := strings.SplitN(words[j], ":", 2)
+			details[parts[0]] = parts[1]
 		}
+		passports = append(passports, details)
 	}
-	passports = append(passports, details)
 	return passports
 }
 
 func main() {
-	lines := common.ReadFileAsStrings("04/input.txt")
+	lines := common.ReadFileAsStringChunks("04/input.txt")
 
 	passports := parse(lines)
 	rules := map[string]*regexp.Regexp{
