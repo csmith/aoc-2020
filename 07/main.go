@@ -2,13 +2,17 @@ package main
 
 import (
 	"github.com/csmith/aoc-2020/common"
-	"strconv"
-	"strings"
+	"regexp"
 )
+
+type Quantity struct {
+	name  string
+	count int
+}
 
 var (
 	containedIn = make(map[string][]string)
-	contents    = make(map[string][]string)
+	contents    = make(map[string][]Quantity)
 	sums        = make(map[string]int)
 	found       = make(map[string]bool)
 )
@@ -31,31 +35,31 @@ func sum(bag string) int {
 
 	res := 1
 	for _, b := range contents[bag] {
-		parts := strings.SplitN(b, " ", 2)
-		count, _ := strconv.Atoi(parts[0])
-		res += count * sum(parts[1])
+		res += b.count * sum(b.name)
 	}
 	sums[bag] = res
 	return res
 }
 
 func main() {
-	lines := common.ReadFileAsStrings("07/input.txt")
+	tokens := common.TokeniseLines(
+		common.ReadFileAsStrings("07/input.txt"),
+		regexp.MustCompile(`(^.*?) bags?|(\d+) (.*?) bags?`),
+	)
 
-	for i := range lines {
-		line := lines[i]
-		parts := strings.SplitN(strings.TrimSuffix(line, "."), " contain ", 2)
-		bag := strings.TrimRight(parts[0], "s")
-		inner := strings.Split(parts[1], ", ")
-		for _, c := range inner {
-			name := strings.TrimRight(strings.TrimLeft(c, "0123456789 "), "s")
+	for i := range tokens {
+		line := tokens[i]
+		bag := line[0]
+		for i := 1; i < len(line); i += 2 {
+			name := line[i+1]
 			containedIn[name] = append(containedIn[name], bag)
-			if c != "no other bags" {
-				contents[bag] = append(contents[bag], strings.TrimRight(c, "s"))
-			}
+			contents[bag] = append(contents[bag], Quantity{
+				name:  name,
+				count: common.MustAtoi(line[i]),
+			})
 		}
 	}
 
-	println(check("shiny gold bag"))
-	println(sum("shiny gold bag") - 1)
+	println(check("shiny gold"))
+	println(sum("shiny gold") - 1)
 }

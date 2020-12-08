@@ -3,17 +3,14 @@ package main
 import (
 	"github.com/csmith/aoc-2020/common"
 	"regexp"
-	"strings"
 )
 
-func parse(chunks []string) []map[string]string {
+func parse(chunks [][]string) []map[string]string {
 	var passports []map[string]string
 	for i := range chunks {
 		details := make(map[string]string)
-		words := strings.Split(chunks[i], " ")
-		for j := range words {
-			parts := strings.SplitN(words[j], ":", 2)
-			details[parts[0]] = parts[1]
+		for j := 0; j < len(chunks[i]); j += 2 {
+			details[chunks[i][j]] = chunks[i][j+1]
 		}
 		passports = append(passports, details)
 	}
@@ -21,9 +18,11 @@ func parse(chunks []string) []map[string]string {
 }
 
 func main() {
-	lines := common.ReadFileAsStringChunks("04/input.txt")
+	passports := parse(common.TokeniseLines(
+		common.ReadFileAsStringChunks("04/input.txt"),
+		regexp.MustCompile(`(\w{3}):(\S+)`),
+	))
 
-	passports := parse(lines)
 	rules := map[string]*regexp.Regexp{
 		"byr": regexp.MustCompile(`^(19[0-9]{2}|200[012])$`),
 		"iyr": regexp.MustCompile(`^20(1\d|20)$`),

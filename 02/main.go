@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/csmith/aoc-2020/common"
+	"regexp"
 	"strings"
 )
 
@@ -10,16 +10,17 @@ func main() {
 	part1 := 0
 	part2 := 0
 
-	lines := common.ReadFileAsStrings("02/input.txt")
+	lines := common.TokeniseLines(
+		common.ReadFileAsStrings("02/input.txt"),
+		regexp.MustCompile(`^(\d+)-(\d+) (.*?): (.*?)$`),
+	)
 	for i := range lines {
 		var (
-			min, max int
-			char string
-			password string
+			min = common.MustAtoi(lines[i][0])
+			max = common.MustAtoi(lines[i][1])
+			char = lines[i][2]
+			password = lines[i][3]
 		)
-		if _, err := fmt.Sscanf(lines[i], "%d-%d %1s: %s", &min, &max, &char, &password); err != nil {
-			panic(err)
-		}
 
 		if count := strings.Count(password, char); count >= min && count <= max {
 			part1++
