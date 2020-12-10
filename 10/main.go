@@ -42,6 +42,7 @@ func main() {
 		}
 		last = lines[i]
 	}
+	chunks = append(chunks, lines[lastChunk:])
 
 	println(ones * threes)
 
