@@ -7,10 +7,18 @@ import (
 const Floor common.Tile = '.'
 const Empty common.Tile = 'L'
 const Occupied common.Tile = '#'
+const Null common.Tile = '💩'
+
+var isOccupied = func(tile common.Tile) bool {
+	return tile == Occupied
+}
+
+var isNotFloor = func(tile common.Tile) bool {
+	return tile != Floor
+}
 
 func main() {
 	original := common.ReadFileAsMap("11/input.txt")
-	part1 := 0
 	state := original
 
 	for {
@@ -24,17 +32,7 @@ func main() {
 					continue
 				}
 
-				occupied := 0
-				for dy := -1; dy <= 1; dy++ {
-					for dx := -1; dx <= 1; dx++ {
-						if dy == 0 && dx == 0 {
-							continue
-						}
-						if y+dy >= 0 && x+dx >= 0 && y+dy < len(state) && x+dx < len(state[y+dy]) && state[y+dy][x+dx] == Occupied {
-							occupied++
-						}
-					}
-				}
+				occupied := common.CountTiles(state.Neighbours(y, x, Floor), isOccupied)
 				if state[y][x] == Empty && occupied == 0 {
 					newState[y] = append(newState[y], Occupied)
 					changed = true
@@ -48,22 +46,12 @@ func main() {
 		}
 		state = newState
 		if !changed {
-			for y := range state {
-				for x := range state[y] {
-					if state[y][x] == Occupied {
-						part1++
-					}
-				}
-			}
-			println(part1)
+			println(state.Count(isOccupied))
 			break
 		}
 	}
 
-	// -------
-
 	state = original
-	part2 := 0
 	for {
 		newState := common.Map{}
 		changed := false
@@ -75,33 +63,7 @@ func main() {
 					continue
 				}
 
-				occupied := 0
-				dirs := [][]int{
-					{-1, -1},
-					{-1, 0},
-					{-1, 1},
-					{0, -1},
-					{0, 1},
-					{1, -1},
-					{1, 0},
-					{1, 1},
-				}
-				for _, d := range dirs {
-					nx := x + d[0]
-					ny := y + d[1]
-					for nx >= 0 && ny >= 0 && ny < len(state) && nx < len(state[ny]) {
-						if state[ny][nx] == Occupied {
-							occupied++
-							break
-						} else if state[ny][nx] == Empty {
-							break
-						} else {
-							nx += d[0]
-							ny += d[1]
-						}
-					}
-				}
-
+				occupied := common.CountTiles(state.Starburst(y, x, Null, isNotFloor), isOccupied)
 				if state[y][x] == Empty && occupied == 0 {
 					newState[y] = append(newState[y], Occupied)
 					changed = true
@@ -115,14 +77,7 @@ func main() {
 		}
 		state = newState
 		if !changed {
-			for y := range state {
-				for x := range state[y] {
-					if state[y][x] == Occupied {
-						part2++
-					}
-				}
-			}
-			println(part2)
+			println(state.Count(isOccupied))
 			break
 		}
 	}
