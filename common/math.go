@@ -1,5 +1,7 @@
 package common
 
+import "math"
+
 // Abs returns the absolute value of x.
 func Abs(x int64) int64 {
 	y := x >> 63
@@ -43,4 +45,14 @@ func LCM(a, b int64, integers ...int64) int64 {
 	}
 
 	return result
+}
+
+func Range(ints []int) (min, max int) {
+	min = math.MaxInt64
+	max = math.MinInt64
+	for _, i := range ints {
+		min = Min(min, i)
+		max = Max(max, i)
+	}
+	return
 }

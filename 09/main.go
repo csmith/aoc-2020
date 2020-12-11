@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/csmith/aoc-2020/common"
-	"math"
 )
 
 func main() {
@@ -35,12 +34,7 @@ func main() {
 			start++
 		}
 		if count == target && (i - start) >= 2 {
-			min := math.MaxInt64
-			max := 0
-			for j := start; j <= i; j++ {
-				min = common.Min(min, lines[j])
-				max = common.Max(max, lines[j])
-			}
+			min, max := common.Range(lines[start:i+1])
 			println(min + max)
 			break
 		}
