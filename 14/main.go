@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/csmith/aoc-2020/common"
 	"log"
 	"regexp"
@@ -34,37 +33,34 @@ func part1(tokens [][]string) int64 {
 func part2(tokens [][]string) int {
 	// Give up on using bitmasks how they're meant to be used, and do some horrific string munging instead. Sad.
 	memory := make(map[int64]int)
-	mask := ""
+	maskOn := int64(0)
+	var floaters []int
+
 	for i := range tokens {
 		if tokens[i][0] == "mask" {
-			mask = tokens[i][1]
-		} else if tokens[i][0] == "mem" {
-			addresses := [][]rune{[]rune(fmt.Sprintf("%036b", int64(common.MustAtoi(tokens[i][1]))))}
-			for n, m := range mask {
-				if m == '0' {
-					continue
-				}
-
-				// Set the nth byte in all addresses to 1
-				for a := range addresses {
-					addresses[a][n] = '1'
-				}
-
-				if m == 'X' {
-					// For Xs, also create a copy with the nth byte set to 0
-					length := len(addresses)
-					for a := 0; a < length; a++ {
-						address := make([]rune, 36)
-						copy(address, addresses[a])
-						address[n] = '0'
-						addresses = append(addresses, address)
-					}
+			maskOn, _ = strconv.ParseInt(strings.ReplaceAll(tokens[i][1], "X", "0"), 2, 64)
+			floaters = []int{}
+			for k, v := range tokens[i][1] {
+				if v == 'X' {
+					floaters = append(floaters, 35-k)
 				}
 			}
 
-			for a := range addresses {
-				addr, _ := strconv.ParseInt(string(addresses[a]), 2, 64)
-				memory[addr] = common.MustAtoi(tokens[i][2])
+		} else if tokens[i][0] == "mem" {
+			rawAddr := common.MustAtoi(tokens[i][1])
+			value := common.MustAtoi(tokens[i][2])
+
+			for m := int64(0); m < 1<<len(floaters); m++ {
+				addr := int64(rawAddr) | maskOn
+				for j := range floaters {
+					addr = (addr & ^(1 << floaters[j])) | (((m >> j) & 1) << floaters[j])
+					//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+					//      Sets the bit of the address   Gets the desired state of the
+					//      covered by the floater to 0   floater (the j'th bit of m) and
+					//      so we can replace it with     shifts it into the desired
+					//      its new value                 position
+				}
+				memory[addr] = value
 			}
 		} else {
 			log.Panicf("Unknown instruction: %s", tokens[i])
