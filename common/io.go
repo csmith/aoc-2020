@@ -18,6 +18,25 @@ func ReadFileAsStrings(path string) []string {
 	return readStringsWithScanner(path, bufio.ScanLines)
 }
 
+// ReadFileAsSectionedStrings reads all lines from the given path, splits them into chunks separated by a blank line,
+// and returns them in a multi-dimensional slice of strings.
+// If an error occurs, the function will panic.
+func ReadFileAsSectionedStrings(path string) [][]string {
+	var res [][]string
+	lines := readStringsWithScanner(path, bufio.ScanLines)
+	last := 0
+	for i := range lines {
+		if lines[i] == "" {
+			res = append(res, lines[last:i])
+			last = i+1
+		}
+	}
+	if last < len(lines)-1 {
+		res = append(res, lines[last:])
+	}
+	return res
+}
+
 // ReadFileAsChunkedStrings reads all lines from the given path, splits them into chunks separated by a blank line,
 // and returns them in a slice of strings. Lines within each chunk are concatenated together, separated by a space.
 // If an error occurs, the function will panic.
